@@ -1,0 +1,3 @@
+[submodule "friso"]
+	path = friso
+	url = https://github.com/lionsoul2014/friso.git
