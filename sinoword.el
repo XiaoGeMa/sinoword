@@ -196,11 +196,11 @@
 (defvar sinoword-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map [remap forward-word] #'sinoword-forward-word)
-    (define-key evil-motion-state-map "w" 'sinoword-forward-word)
-    (define-key evil-motion-state-map "b" 'sinoword-backward-word)
-    ;; (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "w" 'sinoword-forward-word)
-    ;; (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "e" 'sinoword-forward-word)
-    ;; (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "b" 'sinoword-backward-word)
+    ;; (define-key evil-motion-state-map "w" 'sinoword-forward-word)
+    ;; (define-key evil-motion-state-map "b" 'sinoword-backward-word)
+    (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "w" 'sinoword-forward-word)
+    (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "e" 'sinoword-forward-word)
+    (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "b" 'sinoword-backward-word)
     (define-key map [remap backward-word] #'sinoword-backward-word)
     (define-key map [remap kill-word] #'sinoword-kill-word)
     (define-key map [remap backward-kill-word] #'sinoword-backward-kill-word)
@@ -209,7 +209,7 @@
 ;;;###autoload
 (define-minor-mode sinoword-mode
   ""
-  :global t
+  :global nil
   :keymap sinoword-mode-map
   :lighter " Sinoword"
   )

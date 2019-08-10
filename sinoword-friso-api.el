@@ -1,16 +1,29 @@
-;; (require 'sinoword)
+;;; sinoword.el  --- Use nodesinoword chinese segmentation in Emacs  -*- lexical-binding: t -*-
 
-(defun add-subdirs-to-load-path (dir)
-  "Recursive add directories to `load-path'."
-  (let ((default-directory (file-name-as-directory dir)))
-    (add-to-list 'load-path dir)
-    (normal-top-level-add-subdirs-to-load-path)))
+;; Author: XiaoGeMa <coolmaq@gmail.com>
+;; URL: http://github.com/sinoword.el
+;; Version: 0.0.1
+;; Package-Requires: ((emacs "25.2") (jsonrpc "1.0.7"))
+;; Keywords: chinese
 
-;; (add-subdirs-to-load-path "~/Github/lazycat-emacs/site-lisp/sdcv-dict")
-;; (add-subdirs-to-load-path "~/Github/lazycat-emacs/site-lisp/extensions")
-;; (add-subdirs-to-load-path "~/elisp")
-(add-subdirs-to-load-path "~/Github/sino-word/")
-;; (require 'libefriso)
+;; This file is NOT a part of GNU Emacs.
+
+;; This file is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; For a full copy of the GNU General Public License
+;; see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;; Code:
 
 (defvar sinoword-dict nil)
 
