@@ -146,7 +146,8 @@
             (if (looking-back sinoword--single-chinese-char-re
                               (car (bounds-of-thing-at-point 'word)))
                 (try-backward-move backward?)
-              (backward-word))
+              (skip-chars-backward "^[:word:]")
+              (sinoword--move-chinese-word backward?))
           ;; (skip-chars-forward "\n\r\t\f ")
           (skip-chars-forward "^[:word:]")
           ;; (forward-word)
