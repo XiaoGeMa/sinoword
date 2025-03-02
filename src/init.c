@@ -12,7 +12,7 @@ int plugin_is_GPL_compatible;
 
 int emacs_module_init (struct emacs_runtime *ert) EMACS_NOEXCEPT
 {
-  printf("env->size:\n");
+//  printf("env->size:\n");
   int emacs_version;
   if (ert->size < sizeof (*ert))
     return 1;
@@ -20,7 +20,7 @@ int emacs_module_init (struct emacs_runtime *ert) EMACS_NOEXCEPT
   emacs_env *env = ert->get_environment (ert);
   if (env->size >= sizeof (struct emacs_env_26))
     {
-      printf("env->size:%td \n", env->size);
+//      printf("env->size:%td \n", env->size);
       emacs_version = 26;  /* Emacs 26 or later.  */
     }
   else if (env->size >= sizeof (struct emacs_env_25))

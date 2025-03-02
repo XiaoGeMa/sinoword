@@ -83,8 +83,8 @@
 
 (defun sinoword-split-chinese-word (str)
   (sinoword-split-words str))
-  ;; (sinoword-split-words str))
-  ;; (sinoword-word--split-by-friso str))
+;; (sinoword-split-words str))
+;; (sinoword-word--split-by-friso str))
 
 (defsubst sinoword-chinese-word? (s)
   "Return t when S is a real chinese word (All its chars are chinese char.)"
@@ -102,41 +102,41 @@
     (`(,beg . ,end)
      (let ((word (buffer-substring-no-properties beg end)))
        (if (sinoword-chinese-word? word)
-         (let ((cur (point))
-               (index beg)
-               (old-index beg))
-           (cl-block retval
-             (mapc (lambda (x)
-                     (cl-incf index (length x))
-                     (cond
-                      ((or (< old-index cur index)
-                           (= old-index cur))
-                       (cl-return-from retval (cons old-index index)))
-                      ((= index end)
-                       (cl-return-from retval (cons old-index index)))
-                      (t
-                       (setq old-index index))))
-                   (sinoword-split-chinese-word word))))
+           (let ((cur (point))
+                 (index beg)
+                 (old-index beg))
+             (cl-block retval
+               (mapc (lambda (x)
+                       (cl-incf index (length x))
+                       (cond
+                        ((or (< old-index cur index)
+                             (= old-index cur))
+                         (cl-return-from retval (cons old-index index)))
+                        ((= index end)
+                         (cl-return-from retval (cons old-index index)))
+                        (t
+                         (setq old-index index))))
+                     (sinoword-split-chinese-word word))))
          (cons beg  end))))))
 
 
 (defun sinoword--move-chinese-word (backward?)
   (cl-labels
       ((find-dest (backward?)
-                  (pcase (sinoword-chinese-word-atpt-bounds)
-                    (`(,beg . ,end)
-                     (if backward? beg end))))
+         (pcase (sinoword-chinese-word-atpt-bounds)
+           (`(,beg . ,end)
+            (if backward? beg end))))
 
        (try-backward-move (backward?)
-                          (let (pnt beg)
-                            (save-excursion
-                              (if backward? (backward-char) (forward-char))
-                              (setq pnt (point))
-                              (setq beg (find-dest backward?)))
-                            (goto-char pnt)
-                            (when (or (null beg)
-                                      (not (= beg pnt)))
-                              (sinoword--move-chinese-word backward?)))))
+         (let (pnt beg)
+           (save-excursion
+             (if backward? (backward-char) (forward-char))
+             (setq pnt (point))
+             (setq beg (find-dest backward?)))
+           (goto-char pnt)
+           (when (or (null beg)
+                     (not (= beg pnt)))
+             (sinoword--move-chinese-word backward?)))))
 
     (let* ((dest (find-dest backward?))
            (cur (point)))
@@ -147,12 +147,13 @@
                               (car (bounds-of-thing-at-point 'word)))
                 (try-backward-move backward?)
               (skip-chars-backward "^[:word:]")
-              (sinoword--move-chinese-word backward?))
+              (unless (bobp) ; 检查是否在缓冲区起点
+                (sinoword--move-chinese-word backward?)))
           ;; (skip-chars-forward "\n\r\t\f ")
           (skip-chars-forward "^[:word:]")
           ;; (forward-word)
-          (sinoword--move-chinese-word backward?)
-          ))
+          (unless (eobp) ; 检查是否在缓冲区终点
+            (sinoword--move-chinese-word backward?))))
        ((= dest cur)
         (try-backward-move backward?))
        (t
@@ -173,6 +174,16 @@
   (interactive "p")
   (setq arg (or arg 1))
   (sinoword-forward-word (- arg)))
+
+;;;###autoload
+(defun evil-sinoword-backward-word (&optional arg)
+  (interactive "p")
+  (push-mark (1+ (point)))
+  (backward-char)
+  (sinoword-backward-word arg)
+  ;; (pop-mark)
+  )
+
 
 ;;;###autoload
 (defun sinoword-kill-word (arg)
@@ -197,14 +208,16 @@
 (defvar sinoword-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map [remap forward-word] #'sinoword-forward-word)
-    ;; (define-key evil-motion-state-map "w" 'sinoword-forward-word)
-    ;; (define-key evil-motion-state-map "b" 'sinoword-backward-word)
-    (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "w" 'sinoword-forward-word)
-    (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "e" 'sinoword-forward-word)
-    (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "b" 'sinoword-backward-word)
     (define-key map [remap backward-word] #'sinoword-backward-word)
     (define-key map [remap kill-word] #'sinoword-kill-word)
     (define-key map [remap backward-kill-word] #'sinoword-backward-kill-word)
+
+    ;; (define-key evil-motion-state-map "w" 'sinoword-forward-word)
+    ;; (define-key evil-motion-state-map "b" 'sinoword-backward-word)
+    ;; (evil-define-key '(normal visual) 'sinoword-mode "w" 'sinoword-forward-word)
+    (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "w" 'sinoword-forward-word)
+    (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "e" 'sinoword-forward-word)
+    (evil-define-minor-mode-key '(normal visual) 'sinoword-mode "b" 'evil-sinoword-backward-word)
     map))
 
 ;;;###autoload
@@ -214,6 +227,15 @@
   :keymap sinoword-mode-map
   :lighter " Sinoword"
   )
+
+(defun sinoword-mode--turn-on ()
+  "Turn on `sinoword-mode'."
+  (unless (minibufferp)
+    (sinoword-mode t)))
+
+;;;###autoload
+(define-globalized-minor-mode global-sinoword-mode
+  sinoword-mode sinoword-mode--turn-on)
 
 (provide 'sinoword)
 

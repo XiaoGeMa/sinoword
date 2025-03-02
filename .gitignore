@@ -3,6 +3,7 @@
 build/
 # Compiled
 *.elc
+*.so
 
 # Packaging
 .cask

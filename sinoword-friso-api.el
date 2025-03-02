@@ -33,7 +33,7 @@
   (file-name-directory (or load-file-name buffer-file-name)))
 
 (defvar sinoword--module-file
-  (concat sinoword--root "build/libefriso" module-file-suffix))
+  (concat sinoword--root "build/libefriso" ".so"))
 
 (defun sinoword--config ()
   (unless sinoword-dict-path
