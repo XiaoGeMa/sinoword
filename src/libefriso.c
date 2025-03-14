@@ -58,8 +58,8 @@ static emacs_value Fload_dict(emacs_env *env, ptrdiff_t nargs,
   printf("fail to initialize friso and config.\n");
   friso_t friso = friso_new();
   friso_config_t config = friso_new_config();
-  const *path = copy_string_from_emacs(env, args[0]);
-  if (friso_init_from_ifile(friso, config, path) != 1) {
+  const char* path = copy_string_from_emacs(env, args[0]);
+  if (friso_init_from_ifile(friso, config, (fstring)path) != 1) {
     printf("fail to initialize friso and config.\n");
     return em_nil;
   }
@@ -95,7 +95,7 @@ static emacs_value Fsplit_words(emacs_env *env, ptrdiff_t nargs,
   size_t len = strlen(s);
 
   friso_task_t task = friso_new_task();
-  friso_set_text(task, s);
+  friso_set_text(task, (fstring)s);
   int i = 0;
   emacs_value list[len];
   while ((handle->config->next_token(handle->friso, handle->config, task)) !=
